@@ -8,41 +8,41 @@
 <html lang="en">
 <head>
   <!-- Page metadata and settings -->
-  <meta charset="UTF-8" />  <!-- Use UTF-8 text encoding for international characters -->
-  <title>NYC Taxi Trip Data Explorer</title>  <!-- Browser tab title -->
+  <meta charset="UTF-8" />  
+  <title>NYC Taxi Trip Data Explorer</title>  
   
   <!-- External resources -->
-  <link rel="stylesheet" href="style.css" />  <!-- Our custom styling -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <!-- Chart.js library for creating graphs -->
+  <link rel="stylesheet" href="style.css" />  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 </head>
 <body>
-  <!-- Main container that holds everything on our page -->
+ 
   <div class="container">
     
-    <!-- Page header section -->
-    <h1>NYC Taxi Trip Data Explorer</h1>  <!-- Main title -->
-    <p class="subtitle">Urban Mobility Analysis Dashboard</p>  <!-- Subtitle -->
+  
+    <h1>NYC Taxi Trip Data Explorer</h1>  
+    <p class="subtitle">Urban Mobility Analysis Dashboard</p>  
 
     <!-- Summary statistics cards at the top -->
     <!-- These show quick overview numbers that update when filters change -->
     <div class="cards">
       
-      <!-- Card 1: Total number of trips -->
+     
       <div class="card">
         <h3>Total Trips</h3>
-        <p id="total-count">0</p>  <!-- JavaScript will update this number -->
+        <p id="total-count">0</p> 
       </div>
       
-      <!-- Card 2: Average trip duration -->
+     
       <div class="card">
         <h3>Average Duration</h3>
-        <p id="avg-duration">0 min</p>  <!-- JavaScript will update this -->
+        <p id="avg-duration">0 min</p>  
       </div>
       
-      <!-- Card 3: Average trip distance -->
+  
       <div class="card">
         <h3>Average Distance</h3>
-        <p id="avg-distance">0 km</p>  <!-- JavaScript will update this -->
+        <p id="avg-distance">0 km</p> 
       </div>
       
       <!-- Card 4: Date range of our dataset -->
@@ -52,13 +52,12 @@
       </div>
     </div>
 
-    <!-- Filter controls section -->
-    <!-- These dropdown menus let users filter the data by different criteria -->
+    
     <div class="controls">
       
       <!-- Time period filter -->
       <select id="filter-time">
-        <option value="all">All Time Periods</option>          <!-- Show all trips -->
+        <option value="all">All Time Periods</option>         
         <option value="morning">Morning (6AM-12PM)</option>    <!-- Only morning trips -->
         <option value="afternoon">Afternoon (12PM-6PM)</option> <!-- Only afternoon trips -->
         <option value="evening">Evening (6PM-10PM)</option>    <!-- Only evening trips -->
