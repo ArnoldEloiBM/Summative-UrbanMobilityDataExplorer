@@ -1,0 +1,352 @@
+/*
+  NYC Taxi Dashboard - CSS Styling
+  This file controls the visual appearance of our taxi dashboard
+  Written by: Gedeon Ntigibesh and Arnold Eloi Buyange Muvunyi
+  Purpose: Create a modern, professional-looking interface for data visualization
+*/
+
+/* === GLOBAL STYLES === */
+/* Main body styling - sets the overall look of the page */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Modern, readable font */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Purple gradient background */
+  margin: 0;          /* Remove default browser margins */
+  padding: 20px;      /* Add some space around the edge */
+  min-height: 100vh;  /* Make sure page takes full screen height */
+}
+
+/* Main container that holds all our content */
+.container {
+  max-width: 1400px;   /* Don't get too wide on large screens */
+  margin: auto;        /* Center the container on the page */
+  background: white;   /* White background for readability */
+  padding: 30px;       /* Space inside the container */
+  border-radius: 15px; /* Rounded corners for modern look */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);  /* Subtle shadow for depth */
+}
+
+/* === HEADING STYLES === */
+/* Main page title */
+h1 {
+  text-align: center;    /* Center the title */
+  color: #2c3e50;        /* Dark blue-gray color */
+  font-size: 2.5rem;     /* Large font size */
+  margin-bottom: 10px;   /* Small space below title */
+}
+
+/* Subtitle below main title */
+.subtitle {
+  text-align: center;    /* Center the subtitle */
+  color: #7f8c8d;        /* Gray color (less prominent) */
+  font-size: 1.2rem;     /* Medium font size */
+  margin-bottom: 30px;   /* Space before next section */
+}
+
+/* === STATISTICS CARDS === */
+/* Container for the summary cards at the top */
+.cards {
+  display: grid;         /* Use grid layout for responsive cards */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  /* Responsive columns */
+  gap: 20px;            /* Space between cards */
+  margin: 30px 0;       /* Space above and below cards section */
+}
+
+/* Individual statistic card styling */
+.card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Purple gradient */
+  color: white;          /* White text for contrast */
+  padding: 25px;         /* Padding inside each card */
+  border-radius: 12px;   /* Rounded corners */
+  text-align: center;    /* Center text in cards */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);  /* Shadow for depth */
+  transition: transform 0.2s ease;          /* Smooth hover animation */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* === FILTER CONTROLS === */
+/* Container for all filter dropdown menus and inputs */
+.controls {
+  display: flex;         /* Arrange controls in a row */
+  gap: 15px;            /* Space between each control */
+  margin: 30px 0;       /* Space above and below controls */
+  align-items: center;  /* Align controls vertically */
+  flex-wrap: wrap;      /* Wrap to new line on smaller screens */
+  background: #f8f9fa;  /* Light gray background */
+  padding: 20px;        /* Space inside the controls area */
+  border-radius: 10px;  /* Rounded corners */
+}
+
+/* Styling for dropdown menus and number inputs */
+.controls select,
+.controls input {
+  padding: 10px 15px;       /* Space inside each control */
+  border: 2px solid #e9ecef; /* Light border */
+  border-radius: 8px;       /* Rounded corners */
+  font-size: 1rem;          /* Readable text size */
+  min-width: 150px;         /* Minimum width for consistency */
+  background-color: white;  /* White background */
+  cursor: pointer;          /* Show it's clickable */
+  transition: all 0.2s ease; /* Smooth hover effects */
+}
+
+.controls input {
+  min-width: 120px;
+}
+
+.controls select:hover,
+.controls input:hover {
+  border-color: #667eea;
+}
+
+.controls select:focus,
+.controls input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* === CHARTS SECTION === */
+/* Container that holds both charts side by side */
+.charts-container {
+  display: grid;                                              /* Grid layout for charts */
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Responsive columns */
+  gap: 30px;                                                  /* Space between charts */
+  margin: 40px 0;                                             /* Space above and below */
+}
+
+/* Individual chart container */
+.chart-section {
+  background: #f8f9fa;           /* Light background for chart area */
+  padding: 20px;                 /* Space around the chart */
+  border-radius: 10px;           /* Rounded corners */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Subtle shadow */
+}
+
+.chart-section h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.insights-section {
+  margin: 40px 0;
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.insights-section h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.insights-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.insight-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.table-section {
+  margin-top: 40px;
+}
+
+.table-section h3 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+/* === TIME-OF-DAY COLOR CODING === */
+/* Special styling for time period labels in the table */
+.time-of-day {
+  text-transform: capitalize;  /* Make first letter uppercase */
+  font-weight: bold;          /* Bold text */
+  padding: 5px 10px;          /* Space inside the label */
+  border-radius: 15px;        /* Pill-shaped appearance */
+  font-size: 0.9rem;          /* Slightly smaller text */
+}
+
+/* Color-coded time periods (inspired by natural colors) */
+.time-morning { background: #fff3cd; color: #856404; }    /* Yellow like sunrise */
+.time-afternoon { background: #d4edda; color: #155724; }  /* Green like daylight */
+.time-evening { background: #d1ecf1; color: #0c5460; }    /* Blue like evening sky */
+.time-night { background: #f8d7da; color: #721c24; }      /* Dark red like night */
+
+.error {
+  color: #e74c3c;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+}
+
+/* === LOADING ANIMATION === */
+/* Shows overlay and message while data is being fetched */
+
+/* Semi-transparent overlay that covers the entire page */
+body.loading::after {
+  content: '';                              /* Creates empty overlay */
+  position: fixed;                         /* Stays in place when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);    /* Semi-transparent white */
+  z-index: 1000;                          /* Appears above other content */
+  backdrop-filter: blur(2px);             /* Blurs background content */
+}
+
+/* Loading message that appears in center of screen */
+body.loading::before {
+  content: 'Loading taxi data...';         /* Message text */
+  position: fixed;                        /* Stays centered */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);       /* Perfect centering */
+  z-index: 1001;                          /* Above the overlay */
+  font-size: 1.5rem;                      /* Large readable text */
+  color: #2c3e50;                         /* Dark color */
+  background: white;                      /* White background for contrast */
+  padding: 20px 30px;                     /* Space around text */
+  border-radius: 10px;                    /* Rounded corners */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Shadow for depth */
+}
+
+.chart-container {
+  height: 350px;
+  margin: 20px auto;
+  position: relative;
+}
+
+/* === DATA TABLE === */
+/* Main table that displays individual trip records */
+table {
+  width: 100%;                    /* Full width of container */
+  border-collapse: collapse;      /* Remove gaps between cells */
+  background: white;              /* White background */
+  border-radius: 10px;           /* Rounded corners */
+  overflow: hidden;              /* Keeps rounded corners clean */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Subtle shadow */
+}
+
+/* Table header styling */
+th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Purple gradient */
+  color: white;                   /* White text for contrast */
+  padding: 15px 12px;            /* Space in header cells */
+  text-align: left;              /* Left-align header text */
+  font-weight: 600;              /* Bold header text */
+  font-size: 0.9rem;             /* Readable size */
+}
+
+/* Table data cell styling */
+td {
+  padding: 12px;                           /* Space in data cells */
+  border-bottom: 1px solid #e9ecef;       /* Light border between rows */
+  text-align: left;                        /* Left-align data */
+  font-size: 0.9rem;                       /* Readable size */
+}
+
+/* Set specific column widths for better layout */
+th:nth-child(1), td:nth-child(1) { width: 12%; }  /* Trip ID column */
+th:nth-child(2), td:nth-child(2) { width: 18%; }  /* Pickup Time column */
+th:nth-child(3), td:nth-child(3) { width: 10%; }  /* Duration column */
+th:nth-child(4), td:nth-child(4) { width: 10%; }  /* Distance column */
+th:nth-child(5), td:nth-child(5) { width: 10%; }  /* Speed column */
+th:nth-child(6), td:nth-child(6) { width: 10%; }  /* Passengers column */
+th:nth-child(7), td:nth-child(7) { width: 10%; }  /* Vendor column */
+th:nth-child(8), td:nth-child(8) { width: 15%; }  /* Time of Day column */
+
+tr:hover {
+  background: #f8f9fa;
+}
+
+tr:nth-child(even) {
+  background: #fcfcfc;
+}
+
+/* === RESPONSIVE DESIGN === */
+/* Adjustments for different screen sizes to ensure the dashboard works on all devices */
+
+/* For medium-sized screens (tablets in landscape) */
+@media (max-width: 1200px) {
+  .charts-container {
+    grid-template-columns: 1fr;  /* Stack charts vertically instead of side-by-side */
+  }
+}
+
+/* For small screens (phones and tablets in portrait) */
+@media (max-width: 768px) {
+  
+  /* Reduce padding and margins for smaller screens */
+  .container {
+    padding: 20px;     /* Less padding */
+    margin: 10px;      /* Smaller margin */
+  }
+  
+  /* Make title smaller on mobile */
+  h1 {
+    font-size: 2rem;   /* Smaller title font */
+  }
+  
+  /* Adjust cards for mobile */
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Smaller minimum width */
+    gap: 15px;         /* Less gap between cards */
+  }
+  
+  /* Stack controls vertically on mobile */
+  .controls {
+    flex-direction: column;  /* Stack controls vertically */
+    align-items: stretch;    /* Make controls full width */
+    gap: 10px;              /* Less gap between controls */
+  }
+  
+  /* Make controls full width on mobile */
+  .controls select,
+  .controls input {
+    width: 100%;       /* Full width */
+    min-width: auto;   /* Remove minimum width restriction */
+  }
+  
+  /* Make table scrollable horizontally on mobile */
+  table {
+    display: block;         /* Block display for scrolling */
+    overflow-x: auto;       /* Horizontal scroll if needed */
+    white-space: nowrap;    /* Prevent text wrapping */
+  }
+  
+  /* Smaller text and padding for mobile table */
+  th, td {
+    padding: 8px;       /* Less padding */
+    font-size: 0.8rem;  /* Smaller text */
+  }
+  
+  /* Shorter charts on mobile to save vertical space */
+  .chart-container {
+    height: 250px;      /* Reduced height for mobile */
+  }
+}
