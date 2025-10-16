@@ -40,7 +40,7 @@ This project is a fullstack application that analyzes real-world urban mobility 
 ## Project Structure
 
 ```
-dashboard-summative/
+Summative-UrbanMobilityDataExplorer/
 ├── process.py          # Data cleaning and processing pipeline
 ├── db.py              # Database schema and operations
 ├── server.py          # Flask web server and API endpoints
@@ -50,6 +50,7 @@ dashboard-summative/
 ├── requirements.txt   # Python dependencies
 ├── train.csv          # NYC taxi dataset (not included in repo)
 ├── taxi_data.db       # SQLite database (generated)
+├── NYC_UrbanMobilityDataExplorer-TechnicalDocumentation.pdf
 └── README.md          # Project documentation
 ```
 
