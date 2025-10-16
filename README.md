@@ -12,7 +12,6 @@ This project is a fullstack application that analyzes real-world urban mobility 
 
 **[Summative-UrbanMobilityDataExplorer](https://youtu.be/hFbYPWcXMx0)**
 
-*Note: Please replace the above link with your actual video walkthrough URL before submission.*
 
 ## Features
 
