@@ -1,6 +1,6 @@
 // NYC Taxi Dashboard - Frontend JavaScript
 // This file handles all the interactive functionality of our web dashboard
-// Written by: Gedeon Ntigibesh and Arnold Eloi Buyange Muvunyi
+// Written by:Arnold Eloi Buyange Muvunyi
 // Purpose: Create charts, handle user interactions, and update the dashboard display
 
 // Global variables to store our chart objects
