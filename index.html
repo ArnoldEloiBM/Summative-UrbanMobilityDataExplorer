@@ -1,17 +1,8 @@
 <!DOCTYPE html>
-<!-- 
-  NYC Taxi Trip Data Explorer - Main HTML Page
-  This file creates the structure and layout of our taxi dashboard
-  Written by: Arnold Eloi Buyange Muvunyi
-  Purpose: Display interactive charts, filters, and data tables for taxi trip analysis
--->
 <html lang="en">
 <head>
-  <!-- Page metadata and settings -->
   <meta charset="UTF-8" />  
   <title>NYC Taxi Trip Data Explorer</title>  
-  
-  <!-- External resources -->
   <link rel="stylesheet" href="style.css" />  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 </head>
@@ -22,123 +13,107 @@
   
     <h1>NYC Taxi Trip Data Explorer</h1>  
     <p class="subtitle">Urban Mobility Analysis Dashboard</p>  
-
-    <!-- Summary statistics cards at the top -->
-    <!-- These show quick overview numbers that update when filters change -->
     <div class="cards">
-      
-     
       <div class="card">
         <h3>Total Trips</h3>
         <p id="total-count">0</p> 
       </div>
       
-     
       <div class="card">
         <h3>Average Duration</h3>
         <p id="avg-duration">0 min</p>  
       </div>
       
-  
       <div class="card">
         <h3>Average Distance</h3>
         <p id="avg-distance">0 km</p> 
       </div>
       
-      <!-- Card 4: Date range of our dataset -->
       <div class="card">
         <h3>Dataset Period</h3>
-        <p id="date-range">Loading...</p>  <!-- Shows earliest to latest trip dates -->
+        <p id="date-range">Loading...</p>
       </div>
     </div>
 
     
-    <div class="controls">
-      
+    <div class="controls"> 
       <!-- Time period filter -->
       <select id="filter-time">
         <option value="all">All Time Periods</option>         
-        <option value="morning">Morning (6AM-12PM)</option>    <!-- Only morning trips -->
-        <option value="afternoon">Afternoon (12PM-6PM)</option> <!-- Only afternoon trips -->
-        <option value="evening">Evening (6PM-10PM)</option>    <!-- Only evening trips -->
-        <option value="night">Night (10PM-6AM)</option>        <!-- Only night trips -->
+        <option value="morning">Morning (6AM-12PM)</option>
+        <option value="afternoon">Afternoon (12PM-6PM)</option>
+        <option value="evening">Evening (6PM-10PM)</option>
+        <option value="night">Night (10PM-6AM)</option>
       </select>
       
       <!-- Taxi company filter -->
       <select id="filter-vendor">
-        <option value="all">All Vendors</option>  <!-- JavaScript will add more options here -->
+        <option value="all">All Vendors</option>
       </select>
       
       <!-- Trip distance filter -->
       <select id="filter-distance">
-        <option value="all">All Distances</option>               <!-- All trip lengths -->
-        <option value="short">Short Trips (<2km)</option>        <!-- Local trips -->
-        <option value="medium">Medium Trips (2-10km)</option>    <!-- Cross-neighborhood trips -->
-        <option value="long">Long Trips (>10km)</option>         <!-- Long-distance trips -->
+        <option value="all">All Distances</option>
+        <option value="short">Short Trips (<2km)</option>
+        <option value="medium">Medium Trips (2-10km)</option>
+        <option value="long">Long Trips (>10km)</option>
       </select>
       
       <!-- Number of trips to display -->
       <input type="number" id="limit-trips" value="1000" min="100" max="10000" placeholder="Trip limit">
     </div>
 
-    <!-- Charts section -->
-    <!-- This section contains our visual charts that show data patterns -->
     <div class="charts-container">
       
       <!-- Chart 1: Time of day distribution (bar chart) -->
       <div class="chart-section">
-        <h3>Trips by Time of Day</h3>  <!-- Chart title -->
+        <h3>Trips by Time of Day</h3>
         <div class="chart-container">
-          <canvas id="time-chart"></canvas>  <!-- Canvas where JavaScript draws the chart -->
+          <canvas id="time-chart"></canvas>
         </div>
       </div>
       
       <!-- Chart 2: Distance category distribution (doughnut chart) -->
       <div class="chart-section">
-        <h3>Trips by Distance Category</h3>  <!-- Chart title -->
+        <h3>Trips by Distance Category</h3>
         <div class="chart-container">
-          <canvas id="distance-chart"></canvas>  <!-- Canvas where JavaScript draws the chart -->
+          <canvas id="distance-chart"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- Insights section -->
-    <!-- This section shows automatically generated insights about the data -->
+    <!-- Insights section -->>
     <div class="insights-section">
-      <h3>Key Insights</h3>  <!-- Section title -->
+      <h3>Key Insights</h3>
       <div id="insights" class="insights-container">
-        <p>Loading insights...</p>  <!-- JavaScript will replace this with actual insights -->
+        <p>Loading insights...</p>
       </div>
     </div>
 
     <!-- Data table section -->
-    <!-- This section shows detailed information about individual trips -->
     <div class="table-section">
-      <h3>Recent Trips</h3>  <!-- Section title -->
+      <h3>Recent Trips</h3>
       <table id="trips-table">
         
-        <!-- Table header -->
         <thead>
           <tr>
-            <th>Trip ID</th>         <!-- Unique identifier -->
-            <th>Pickup Time</th>     <!-- When trip started -->
-            <th>Duration (min)</th>  <!-- How long it took -->
-            <th>Distance (km)</th>   <!-- How far they traveled -->
-            <th>Speed (km/h)</th>    <!-- Average speed -->
-            <th>Passengers</th>      <!-- Number of people -->
-            <th>Vendor</th>          <!-- Taxi company -->
-            <th>Time of Day</th>     <!-- Morning, afternoon, etc. -->
+            <th>Trip ID</th>
+            <th>Pickup Time</th>
+            <th>Duration (min)</th>
+            <th>Distance (km)</th>
+            <th>Speed (km/h)</th>
+            <th>Passengers</th>
+            <th>Vendor</th>
+            <th>Time of Day</th>
           </tr>
         </thead>
-        
-        <!-- Table body - JavaScript will fill this with trip data -->
+         
         <tbody></tbody>
       </table>
     </div>
     
-  </div>  <!-- End of main container -->
+  </div>
   
-  <!-- Load our JavaScript file that makes everything interactive -->
   <script src="script.js"></script>
 </body>
 </html>

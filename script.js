@@ -1,54 +1,29 @@
-// NYC Taxi Dashboard - Frontend JavaScript
-// This file handles all the interactive functionality of our web dashboard
-// Written by:Arnold Eloi Buyange Muvunyi
-// Purpose: Create charts, handle user interactions, and update the dashboard display
-
-// Global variables to store our chart objects
-// We need to keep track of these so we can update or destroy them when filters change
 let timeChart = null;      // Chart showing trips by time of day (morning, afternoon, etc.)
 let distanceChart = null;  // Chart showing trips by distance category (short, medium, long)
 
 // === UTILITY FUNCTIONS ===
-// These helper functions format data for display
-
 function formatDuration(seconds) {
     // Convert trip duration from seconds to a readable format.
-    // Example: 180 seconds becomes "3 min"
-    const minutes = Math.round(seconds / 60);  // Convert seconds to minutes
+    const minutes = Math.round(seconds / 60);
     return `${minutes} min`;
 }
 
 function formatDistance(km) {
     // Format distance with units for display.
-    // Example: 5.2 becomes "5.2 km"
     return `${km} km`;
 }
 
 function formatCoordinate(coord) {
     // Format GPS coordinates to 4 decimal places.
-    // Shows 'N/A' if coordinate is missing.
     return coord ? coord.toFixed(4) : 'N/A';
 }
 
 // === DATA DISPLAY FUNCTIONS ===
-// These functions update different parts of the dashboard when new data arrives
-
 function updateTable(trips) {
-    // This function updates the data table with trip information.
-    // It takes the trip data and creates HTML table rows to display it.
-    // We limit to 50 rows for better page performance.
-    // Find the table body element where we'll put our data
     const tbody = document.querySelector('#trips-table tbody');
-    
-    // Clear out any existing rows from previous searches
     tbody.innerHTML = '';
-    
-    // Process each trip (but only show first 50 for performance)
     trips.slice(0, 50).forEach(trip => {
-        // Create a new table row
         const row = document.createElement('tr');
-        
-        // Convert the pickup time to a readable date format
         const pickupDate = new Date(trip.pickup_datetime);
         
         // Fill the row with trip data - each <td> is a table cell
@@ -62,8 +37,6 @@ function updateTable(trips) {
             <td>${trip.vendor_id}</td>                            <!-- Taxi company -->
             <td class="time-of-day time-${trip.time_of_day}">${trip.time_of_day}</td>  <!-- Time period with color coding -->
         `;
-        
-        // Add this row to our table
         tbody.appendChild(row);
     });
 }
@@ -72,76 +45,64 @@ function updateTable(trips) {
 // These functions create and update our visual charts using Chart.js library
 
 function updateTimeChart(chartData) {
-    // This function creates a bar chart showing trips by time of day.
-    // It shows how many trips happen during morning, afternoon, evening, and night.
-    // If we already have a chart, destroy it before creating a new one
-    // This prevents memory leaks and display issues
     if (timeChart) {
         timeChart.destroy();
     }
 
-    // Get the canvas element where we'll draw our chart
     const ctx = document.getElementById('time-chart').getContext('2d');
-    
-    // Define colors for each time period (makes the chart more intuitive)
     const colorMap = {
-        'morning': '#FFD93D',    // Yellow for morning (like sunrise)
-        'afternoon': '#FF6B35',  // Orange for afternoon
-        'evening': '#6A0572',    // Purple for evening
-        'night': '#1A1A1A'       // Dark for night
+        'morning': '#FFD93D',
+        'afternoon': '#FF6B35',
+        'evening': '#6A0572',
+        'night': '#1A1A1A'
     };
 
-    // Apply the right color to each data point based on its label
     const backgroundColor = chartData.labels.map(label => colorMap[label] || '#FF6384');
 
-    // Create the actual bar chart using Chart.js library
     timeChart = new Chart(ctx, {
-        type: 'bar',  // Bar chart type - good for comparing quantities
+        type: 'bar',
         data: {
-            // Capitalize the first letter of each label (morning -> Morning)
             labels: chartData.labels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
             datasets: [{
-                label: 'Number of Trips',           // Legend label
-                data: chartData.values,             // The actual trip counts
-                backgroundColor: backgroundColor,   // Fill colors for each bar
-                borderColor: backgroundColor.map(c => c + '80'),  // Border colors (80% opacity)
-                borderWidth: 2                     // Border thickness
+                label: 'Number of Trips',
+                data: chartData.values,
+                backgroundColor: backgroundColor,
+                borderColor: backgroundColor.map(c => c + '80'),
+                borderWidth: 2
             }]
         },
         options: {
-            responsive: true,  // Chart resizes with the page
+            responsive: true,
             plugins: {
                 legend: {
-                    display: false  // Hide legend since colors are intuitive
+                    display: false
                 },
-                tooltip: {  // What shows when you hover over a bar
+                tooltip: {
                     callbacks: {
                         label: function(context) {
-                            // Get additional data for this time period
                             const index = context.dataIndex;
                             const trips = context.raw;
                             const avgDuration = chartData.avg_duration ? chartData.avg_duration[index] : 0;
                             const avgDistance = chartData.avg_distance ? chartData.avg_distance[index] : 0;
                             
-                            // Return multiple lines of information
                             return [
-                                `Trips: ${trips}`,                    // Number of trips
-                                `Avg Duration: ${avgDuration} min`,   // Average trip time
-                                `Avg Distance: ${avgDistance} km`     // Average distance
+                                `Trips: ${trips}`,
+                                `Avg Duration: ${avgDuration} min`,
+                                `Avg Distance: ${avgDistance} km`
                             ];
                         }
                     }
                 }
             },
-            scales: {  // Configure the chart axes
-                y: {  // Vertical axis (trip counts)
-                    beginAtZero: true,  // Always start at 0
+            scales: {
+                y: {
+                    beginAtZero: true,
                     title: {
                         display: true,
                         text: 'Number of Trips'
                     }
                 },
-                x: {  // Horizontal axis (time periods)
+                x: {
                     title: {
                         display: true,
                         text: 'Time of Day'
@@ -323,18 +284,15 @@ function updateInsights(data) {
     }
 }
 
-// === DATA FETCHING FUNCTIONS ===
-// These functions get data from our Python server and update the dashboard
+// DATA FETCHING FUNCTIONS
 
 async function fetchData() {
-    // This is our main function that gets filtered data from the server.
-    // It runs whenever the user changes filters or when the page first loads.
     try {
         // Get the current filter values from the dropdown menus
-        const timeOfDay = document.getElementById('filter-time').value;        // morning, afternoon, etc.
-        const vendorId = document.getElementById('filter-vendor').value;       // taxi company
-        const distanceCategory = document.getElementById('filter-distance').value;  // short, medium, long
-        const limit = document.getElementById('limit-trips').value;            // how many trips to show
+        const timeOfDay = document.getElementById('filter-time').value;
+        const vendorId = document.getElementById('filter-vendor').value;
+        const distanceCategory = document.getElementById('filter-distance').value;
+        const limit = document.getElementById('limit-trips').value;
         
         // Show loading indicator while we wait for data
         document.body.classList.add('loading');
@@ -357,7 +315,6 @@ async function fetchData() {
         
         // Convert the response to JSON format
         const data = await response.json();
-        
         if (data.error) {
             console.error('Server error:', data.error);
             return;
@@ -370,11 +327,11 @@ async function fetchData() {
         }
         
         // Update all parts of our dashboard with the new data
-        updateTable(data.trips || []);                                           // Update the data table
-        updateTimeChart(data.time_chart_data || {labels: [], values: []});       // Update time-of-day chart
-        updateDistanceChart(data.distance_chart_data || {labels: [], values: []}); // Update distance chart
-        updateStats(data);                                                       // Update summary statistics
-        updateInsights(data);                                                    // Update insights section
+        updateTable(data.trips || []);
+        updateTimeChart(data.time_chart_data || {labels: [], values: []});
+        updateDistanceChart(data.distance_chart_data || {labels: [], values: []});
+        updateStats(data);
+        updateInsights(data);
         
         // Update the vendor dropdown with available taxi companies
         if (data.vendors && data.vendors.length > 0) {
@@ -382,11 +339,9 @@ async function fetchData() {
         }
         
     } catch (error) {
-        // If anything goes wrong, show an error message
         console.error('Error fetching data:', error);
         document.getElementById('insights').innerHTML = '<p class="error">Error loading data. Please try again.</p>';
     } finally {
-        // Always remove the loading indicator, whether successful or not
         document.body.classList.remove('loading');
     }
 }
@@ -395,12 +350,9 @@ async function fetchStats() {
     // This function gets overall statistics about our dataset.
     // It runs once when the page loads to show the date range of our data.
     try {
-        // Get statistics from our server
         const response = await fetch('/stats');
         if (response.ok) {
             const stats = await response.json();
-            
-            // If we have date information, display it
             if (stats.earliest_trip && stats.latest_trip) {
                 const earliest = new Date(stats.earliest_trip).toLocaleDateString();
                 const latest = new Date(stats.latest_trip).toLocaleDateString();
@@ -408,53 +360,37 @@ async function fetchStats() {
             }
         }
     } catch (error) {
-        // If we can't get stats, show a fallback message
         console.error('Error fetching stats:', error);
         document.getElementById('date-range').textContent = 'Date range unavailable';
     }
 }
 
-// === PERFORMANCE OPTIMIZATION ===
-// This function prevents too many requests when users rapidly change filters
+// PERFORMANCE OPTIMIZATION
+
 function debounce(func, wait) {
     // Debouncing delays function execution until after a pause in calls.
-    // Example: If user rapidly changes filters, we wait 500ms after they stop
-    // before actually fetching new data. This prevents server overload.
     let timeout;
     return function executedFunction(...args) {
         const later = () => {
             clearTimeout(timeout);
-            func(...args);  // Execute the original function
+            func(...args);
         };
-        clearTimeout(timeout);       // Cancel previous timer
-        timeout = setTimeout(later, wait);  // Start new timer
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
     };
 }
 
 // Create a debounced version of fetchData (waits 500ms after user stops changing filters)
 const debouncedFetchData = debounce(fetchData, 500);
 
-// === EVENT LISTENERS ===
-// These tell the browser what to do when users interact with our page
-
-// When users change the time filter dropdown, fetch new data
+// EVENT LISTENERS
 document.getElementById('filter-time').addEventListener('change', debouncedFetchData);
-
-// When users change the vendor filter dropdown, fetch new data
 document.getElementById('filter-vendor').addEventListener('change', debouncedFetchData);
-
-// When users change the distance filter dropdown, fetch new data
 document.getElementById('filter-distance').addEventListener('change', debouncedFetchData);
-
-// When users change the trip limit input, fetch new data
 document.getElementById('limit-trips').addEventListener('input', debouncedFetchData);
 
-// === INITIALIZATION ===
-// This runs when the page first loads
-
+// INITIALIZATION
 console.log('NYC Taxi Dashboard - JavaScript loaded successfully');
 console.log('Original implementation by: Gedeon Ntigibesh');
-
-// Load initial data when page opens
-fetchData();   // Get trip data with default filters
-fetchStats();  // Get overall statistics
+fetchData();
+fetchStats();
