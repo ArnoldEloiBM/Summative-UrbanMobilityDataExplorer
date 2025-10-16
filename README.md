@@ -1,12 +1,16 @@
 # NYC Taxi Trip Data Explorer - Urban Mobility Dashboard
 
+## Group Members
+Gedeon Ntigibeshya
+Arnold Eloi Buyange Muvunyi
+
 ## Overview
 
 This project is a fullstack application that analyzes real-world urban mobility patterns using the New York City Taxi Trip dataset. The application cleans and processes raw taxi trip data, stores it in a relational database, and presents interactive visualizations through a web dashboard to reveal insights about urban transportation patterns.
 
 ## Video Walkthrough
 
-**[Video Link: [Your Video URL Here]]**
+**[Summative-UrbanMobilityDataExplorer](https://youtu.be/hFbYPWcXMx0)**
 
 *Note: Please replace the above link with your actual video walkthrough URL before submission.*
 
@@ -63,7 +67,7 @@ dashboard-summative/
 1. **Clone the repository or extract the project files**
    ```bash
    # Navigate to the project directory
-   cd dashboard-summative
+   cd Summative-UrbanMobilityDataExplorer
    ```
 
 2. **Install Python dependencies**
