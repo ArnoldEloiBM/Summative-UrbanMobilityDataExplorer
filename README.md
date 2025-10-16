@@ -72,7 +72,7 @@ dashboard-summative/
    ```
 
 3. **Obtain the NYC Taxi Dataset**
-   - Download `train.csv` from the official NYC Taxi Trip dataset
+   - Download [`train.csv`](https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data?select=train.zip) from the official NYC Taxi Trip dataset
    - Place the file in the project root directory
    - File should be named exactly `train.csv`
 
