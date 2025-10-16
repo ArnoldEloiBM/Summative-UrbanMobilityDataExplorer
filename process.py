@@ -1,13 +1,7 @@
-# NYC Taxi Data Processing Pipeline
-# This file reads, cleans, and processes raw taxi trip data from CSV files
-# Written by: Gedeon Ntigibesh (Original Implementation)
-# Purpose: Transform raw taxi data into clean, usable format for our dashboard
-
-# Import necessary libraries for data processing
-import csv  # For reading CSV files with taxi trip data
-from datetime import datetime  # For handling date and time information
-import math  # For mathematical calculations (distance, speed, etc.)
-from db import init_db, store_taxi_data  # Our custom database functions
+import csv
+from datetime import datetime
+import math
+from db import init_db, store_taxi_data
 
 def parse_csv(csv_file):
     """
@@ -21,33 +15,23 @@ def parse_csv(csv_file):
         trips: List of valid trip records
         excluded_count: Number of records that were skipped due to missing data
     """
-    trips = []  # List to store all valid trip records
-    excluded_count = 0  # Counter for how many bad records we skip
+    trips = []
+    excluded_count = 0
     
     try:
-        # Open the CSV file and read it line by line
         with open(csv_file, 'r', encoding='utf-8') as file:
-            # DictReader treats each row as a dictionary with column names as keys
             reader = csv.DictReader(file)
-            
-            # Process each row in the CSV file
             for row in reader:
-                # Basic validation - make sure we have the most important data
-                # Skip any rows that are missing pickup time, dropoff time, or trip duration
                 if not all([row.get('pickup_datetime'), row.get('dropoff_datetime'), 
                            row.get('trip_duration')]):
-                    excluded_count += 1  # Count this as a bad record
-                    continue  # Skip to the next row
-                    
-                # This row looks good, so add it to our list
+                    excluded_count += 1 
+                    continue
                 trips.append(row)
                 
     except Exception as e:
-        # If we can't read the file, print an error message
         print(f"Error reading CSV file: {e}")
-        return [], 0  # Return empty results
+        return [], 0
     
-    # Print a summary of what we loaded
     print(f"Loaded {len(trips)} valid trips, excluded {excluded_count} incomplete records")
     return trips, excluded_count
 
@@ -76,30 +60,23 @@ def haversine_distance(lat1, lon1, lat2, lon2):
         
     Returns:
         float: Distance in kilometers
-        
-    Note: Custom implementation required by assignment - no built-in geodetic functions used
     """
     if not all([lat1, lon1, lat2, lon2]):
         return 0
-    
-    # Convert degrees to radians manually (no math.radians() used)
     lat1_rad = lat1 * math.pi / 180
     lon1_rad = lon1 * math.pi / 180
     lat2_rad = lat2 * math.pi / 180
     lon2_rad = lon2 * math.pi / 180
     
     # Calculate differences
-    dlat = lat2_rad - lat1_rad  # Δφ (delta phi)
-    dlon = lon2_rad - lon1_rad  # Δλ (delta lambda)
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
     
     # Haversine formula implementation - step by step
-    # a = sin²(Δφ/2) + cos φ1 ⋅ cos φ2 ⋅ sin²(Δλ/2)
     a = (math.sin(dlat/2))**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * (math.sin(dlon/2))**2
-    
-    # c = 2 ⋅ atan2( √a, √(1−a) )
+
     c = 2 * math.asin(math.sqrt(a))
-    
-    # Earth's radius in kilometers (mean radius)
+
     EARTH_RADIUS_KM = 6371
     
     # d = R ⋅ c (final distance)
@@ -116,13 +93,13 @@ def categorize_time_of_day(hour):
     Returns:
         String: "morning", "afternoon", "evening", or "night"
     """
-    if 6 <= hour < 12:        # 6 AM to 11:59 AM
+    if 6 <= hour < 12:
         return "morning"
-    elif 12 <= hour < 18:     # 12 PM to 5:59 PM
+    elif 12 <= hour < 18:
         return "afternoon"
-    elif 18 <= hour < 22:     # 6 PM to 9:59 PM
+    elif 18 <= hour < 22:
         return "evening"
-    else:                     # 10 PM to 5:59 AM
+    else:
         return "night"
 
 def categorize_trip_distance(distance_km):
@@ -136,17 +113,16 @@ def categorize_trip_distance(distance_km):
     Returns:
         String: "short", "medium", or "long"
     """
-    if distance_km < 2:       # Less than 2 km = short trip
+    if distance_km < 2:
         return "short"
-    elif distance_km < 10:    # 2-10 km = medium trip
+    elif distance_km < 10:
         return "medium"
-    else:                     # More than 10 km = long trip
+    else:
         return "long"
 
 def quicksort_durations(arr, low, high):
     """
-    CUSTOM ALGORITHM IMPLEMENTATION - REQUIRED FOR ASSIGNMENT
-    
+    CUSTOM ALGORITHM IMPLEMENTATION
     Custom quicksort implementation for duration sorting (manual implementation)
     
     Purpose: Statistical outlier detection for taxi trip durations
@@ -163,17 +139,11 @@ def quicksort_durations(arr, low, high):
         arr: List of duration values to sort
         low: Starting index of subarray
         high: Ending index of subarray
-        
-    Note: This is implemented WITHOUT using built-in sort functions
-          as required by the assignment specifications
     """
     if low < high:
-        # Partition the array and get pivot index
         pi = partition_durations(arr, low, high)
-        
-        # Recursively sort elements before and after partition
-        quicksort_durations(arr, low, pi - 1)  # Sort left subarray
-        quicksort_durations(arr, pi + 1, high)  # Sort right subarray
+        quicksort_durations(arr, low, pi - 1)
+        quicksort_durations(arr, pi + 1, high)
 
 def partition_durations(arr, low, high):
     """
@@ -195,26 +165,21 @@ def partition_durations(arr, low, high):
     Returns:
         int: Index of pivot element in its final sorted position
     """
-    pivot = arr[high]  # Choose rightmost element as pivot
-    i = low - 1        # Index of smaller element (indicates right position of pivot found so far)
-    
-    # Traverse array from low to high-1
+    pivot = arr[high]
+    i = low - 1
+
     for j in range(low, high):
-        # If current element is smaller than or equal to pivot
         if arr[j] <= pivot:
-            i += 1  # Increment index of smaller element
-            arr[i], arr[j] = arr[j], arr[i]  # Swap elements
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
     
-    # Place pivot in correct position
     arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1  # Return position of pivot
+    return i + 1
 
 def detect_outliers(trips):
     """Efficient outlier detection using sampling for large datasets"""
     durations = []
-    
-    # Sample only every 10th trip for outlier detection to improve performance
-    sample_size = min(len(trips), 50000)  # Use at most 50k samples
+    sample_size = min(len(trips), 50000)
     step = max(1, len(trips) // sample_size)
     
     print(f"Sampling {sample_size} trips for outlier detection...")
@@ -228,7 +193,6 @@ def detect_outliers(trips):
         except (ValueError, KeyError):
             continue
     
-    # Apply reasonable bounds without complex statistical analysis
     if durations:
         # Use quicksort (custom implementation)
         quicksort_durations(durations, 0, len(durations) - 1)
@@ -244,8 +208,8 @@ def detect_outliers(trips):
         max_duration = q3 + 1.5 * iqr
         
         # Apply reasonable bounds for NYC taxi trips
-        min_duration = max(30, min_duration)  # At least 30 seconds
-        max_duration = min(7200, max_duration)  # At most 2 hours
+        min_duration = max(30, min_duration)
+        max_duration = min(7200, max_duration)
     else:
         min_duration, max_duration = 30, 7200
     
@@ -279,7 +243,7 @@ def clean_and_validate_trip(trip, min_duration, max_duration):
         if pickup_lat == 0 or pickup_lon == 0 or dropoff_lat == 0 or dropoff_lon == 0:
             return None, "Zero coordinates"
         
-        # Validate NYC area coordinates (more lenient bounds)
+        # Validate NYC area coordinates
         if not (40.0 <= pickup_lat <= 41.0 and -75.0 <= pickup_lon <= -73.0):
             return None, "Invalid pickup coordinates"
         if not (40.0 <= dropoff_lat <= 41.0 and -75.0 <= dropoff_lon <= -73.0):
@@ -309,7 +273,7 @@ def clean_and_validate_trip(trip, min_duration, max_duration):
         distance_km = haversine_distance(pickup_lat, pickup_lon, dropoff_lat, dropoff_lon)
         
         # Skip trips that are too short (likely GPS errors)
-        if distance_km < 0.1:  # Less than 100 meters
+        if distance_km < 0.1:
             return None, "Trip too short"
         
         speed_kmh = (distance_km / duration * 3600) if duration > 0 else 0
@@ -324,7 +288,7 @@ def clean_and_validate_trip(trip, min_duration, max_duration):
             passenger_count = 1
             
         if passenger_count < 1 or passenger_count > 8:
-            passenger_count = 1  # Default to 1 if invalid
+            passenger_count = 1
         
         try:
             vendor_id = int(float(trip['vendor_id']))
@@ -359,9 +323,7 @@ def process_taxi_data(trips):
     """Process and clean taxi trip data with optimization for large datasets"""
     print("Starting data processing...")
     
-    # For development/demo purposes, limit to a reasonable subset
-    # You can remove this limit for full production processing
-    MAX_TRIPS = 10000  # Process first 10k trips for demo
+    MAX_TRIPS = 10000
     if len(trips) > MAX_TRIPS:
         print(f"Limiting processing to first {MAX_TRIPS} trips for demo purposes")
         trips = trips[:MAX_TRIPS]
@@ -414,12 +376,8 @@ def main():
     print("=" * 40)
     print("This program will process raw taxi data and prepare it for our dashboard.")
     print("Please wait while we clean and validate the data...\n")
-    
-    # Step 1: Set up our database tables
     print("Step 1: Setting up database...")
     init_db()
-    
-    # Step 2: Read the raw data from the CSV file
     print("Step 2: Reading raw data from train.csv...")
     trips, excluded_initial = parse_csv('train.csv')
     
@@ -427,8 +385,6 @@ def main():
     if not trips:
         print("ERROR: No data loaded. Please check if train.csv exists in this folder.")
         return
-    
-    # Step 3: Clean and validate all the trip data
     print("Step 3: Cleaning and validating trip data...")
     processed_trips = process_taxi_data(trips)
     
@@ -436,20 +392,16 @@ def main():
     if not processed_trips:
         print("ERROR: No valid trips found after processing. Check your data quality.")
         return
-    
-    # Step 4: Save the clean data to our database
     print("Step 4: Saving clean data to database...")
     store_taxi_data(processed_trips)
     
-    # Success! Print a summary
+
     print(f"\n{'='*50}")
     print(f"SUCCESS: Data processing pipeline completed!")
     print(f"Final dataset contains {len(processed_trips):,} clean taxi trips.")
     print(f"Database is ready for the dashboard. You can now run server.py")
     print(f"{'='*50}")
 
-# This ensures the main() function only runs when we execute this file directly
-# (not when it's imported by another Python file)
 if __name__ == '__main__':
     print("\n" + "="*60)
     print("NYC TAXI DASHBOARD - DATA PROCESSING")

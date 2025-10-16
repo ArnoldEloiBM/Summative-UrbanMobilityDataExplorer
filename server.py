@@ -1,14 +1,8 @@
-# NYC Taxi Dashboard - Web Server
-# This file creates a Flask web server to serve our taxi data dashboard
-# Written by: Gedeon Ntigibesh (Original Implementation)
-# Purpose: Provide API endpoints for taxi trip data visualization
-
-# Import necessary libraries
-from flask import Flask, jsonify, request, send_from_directory  # Web framework for creating our server
-import sqlite3  # Database connection library
-from db import get_unique_vendors, get_trip_stats  # Our custom database functions
-import traceback  # For detailed error messages
-import os  # For file system operations
+from flask import Flask, jsonify, request, send_from_directory
+import sqlite3
+from db import get_unique_vendors, get_trip_stats
+import traceback
+import os
 
 # Create our Flask web application
 app = Flask(__name__)
@@ -23,21 +17,17 @@ def get_db():
     Returns: A database connection object that we can use to run queries
     """
     try:
-        # Check if the database file actually exists on our computer
         if not os.path.exists(DB_PATH):
             raise FileNotFoundError(f"Database file {DB_PATH} not found. Please run process.py first.")
         
         # Create connection to the SQLite database
         conn = sqlite3.connect(DB_PATH)
-        # This makes query results act like dictionaries (easier to work with)
+        # This makes query results act like dictionaries
         conn.row_factory = sqlite3.Row
         return conn
     except Exception as e:
-        # If something goes wrong, print the error and stop the program
         print(f"Error connecting to database: {str(e)}")
         raise
-
-# Route handlers - these tell our server what to do when users visit different web pages
 
 @app.route('/')
 def index():
@@ -63,26 +53,19 @@ def get_data():
     The JavaScript on our webpage calls this to get data for charts and tables.
     """
     try:
-        # Get filter parameters from the web page request
-        # These come from the dropdown menus on our dashboard
-        time_of_day = request.args.get('time_of_day', 'all')  # morning, afternoon, evening, night, or all
-        vendor_id = request.args.get('vendor_id', 'all')      # specific taxi company ID or all
-        distance_category = request.args.get('distance_category', 'all')  # short, medium, long, or all
-        limit = int(request.args.get('limit', '1000'))        # how many records to show (default 1000)
+        time_of_day = request.args.get('time_of_day', 'all')
+        vendor_id = request.args.get('vendor_id', 'all')
+        distance_category = request.args.get('distance_category', 'all')
+        limit = int(request.args.get('limit', '1000'))
         
-        # Print what filters are being used (helpful for debugging)
+        # Print what filters are being used
         print(f"Processing request - Time: {time_of_day}, Vendor: {vendor_id}, Distance: {distance_category}")
-        
-        # Connect to our database
+
         conn = get_db()
         if not conn:
             raise Exception("Could not connect to database")
 
         # Create our main SQL query to get taxi trip data
-        # This is a complex query that:
-        # 1. Gets all the trip information we need
-        # 2. Calculates statistics like averages and totals
-        # 3. Allows us to filter the data based on user selections
         query = """
             WITH filtered_trips AS (
                 SELECT 
@@ -109,22 +92,20 @@ def get_data():
                 FROM taxi_trips 
                 WHERE 1=1                   -- Always true, makes it easy to add more filters
         """
-        # List to store our filter values (prevents SQL injection attacks)
+
         params = []
 
         # Add filters to our query based on what the user selected
-        # Only add filters if user didn't select "all" (which means no filter)
-        
         if time_of_day != 'all':
-            query += " AND time_of_day = ?"  # Filter by time of day (morning, afternoon, etc.)
+            query += " AND time_of_day = ?"
             params.append(time_of_day)
         
         if vendor_id != 'all':
-            query += " AND vendor_id = ?"     # Filter by specific taxi company
+            query += " AND vendor_id = ?"
             params.append(int(vendor_id))
             
         if distance_category != 'all':
-            query += " AND trip_distance_category = ?"  # Filter by trip distance (short, medium, long)
+            query += " AND trip_distance_category = ?"
             params.append(distance_category)
 
         query += f"""
@@ -145,7 +126,6 @@ def get_data():
             raise
 
         # Get data for our "Time of Day" chart (pie chart showing trip distribution)
-        # This shows how many trips happen during morning, afternoon, evening, night
         time_chart_query = """
             SELECT 
                 time_of_day,                    -- morning, afternoon, evening, night
@@ -155,7 +135,7 @@ def get_data():
             FROM taxi_trips
             WHERE 1=1                           -- base condition for adding filters
         """
-        chart_params = []  # parameters for the chart query
+        chart_params = []
         
         if vendor_id != 'all':
             time_chart_query += " AND vendor_id = ?"
@@ -183,7 +163,6 @@ def get_data():
             raise
 
         # Get data for our "Distance Category" chart (bar chart showing trip types)
-        # This shows how many short, medium, and long trips we have
         distance_chart_query = """
             SELECT 
                 trip_distance_category,         -- short, medium, or long trips
@@ -230,29 +209,28 @@ def get_data():
             vendors = []
 
         # Calculate summary statistics to show on the dashboard
-        total_count = trips[0]['total_count'] if trips else 0  # Total number of trips found
-        avg_duration = round(trips[0]['avg_duration'], 2) if trips and trips[0]['avg_duration'] else 0  # Average trip time
-        avg_distance = round(trips[0]['avg_distance'], 2) if trips and trips[0]['avg_distance'] else 0  # Average trip distance
+        total_count = trips[0]['total_count'] if trips else 0 
+        avg_duration = round(trips[0]['avg_duration'], 2) if trips and trips[0]['avg_duration'] else 0 
+        avg_distance = round(trips[0]['avg_distance'], 2) if trips and trips[0]['avg_distance'] else 0
 
         # Build the response data that gets sent back to our web page
-        # This contains everything the JavaScript needs to update the charts and table
         response_data = {
-            'trips': trips,  # Individual trip records for the data table
-            'time_chart_data': {  # Data for the time-of-day pie chart
-                'labels': [row['time_of_day'] for row in time_chart],  # morning, afternoon, etc.
-                'values': [row['count'] for row in time_chart],        # number of trips
-                'avg_duration': [round(row['avg_duration'], 2) for row in time_chart],  # average time
-                'avg_distance': [round(row['avg_distance'], 2) for row in time_chart]   # average distance
+            'trips': trips,
+            'time_chart_data': { 
+                'labels': [row['time_of_day'] for row in time_chart],
+                'values': [row['count'] for row in time_chart],
+                'avg_duration': [round(row['avg_duration'], 2) for row in time_chart],
+                'avg_distance': [round(row['avg_distance'], 2) for row in time_chart]
             },
-            'distance_chart_data': {  # Data for the distance category bar chart
-                'labels': [row['trip_distance_category'] for row in distance_chart],  # short, medium, long
-                'values': [row['count'] for row in distance_chart],                    # number of trips
-                'avg_speed': [round(row['avg_speed'], 2) for row in distance_chart]    # average speed
+            'distance_chart_data': {
+                'labels': [row['trip_distance_category'] for row in distance_chart],
+                'values': [row['count'] for row in distance_chart],
+                'avg_speed': [round(row['avg_speed'], 2) for row in distance_chart]
             },
-            'total_count': total_count,      # Summary statistic: total trips
-            'avg_duration': avg_duration,    # Summary statistic: average duration
-            'avg_distance': avg_distance,    # Summary statistic: average distance
-            'vendors': vendors               # List of taxi companies for the dropdown
+            'total_count': total_count,
+            'avg_duration': avg_duration,
+            'avg_distance': avg_distance,
+            'vendors': vendors
         }
 
         print(f"Successfully processed request. Found {total_count} trips.")
@@ -271,20 +249,17 @@ def get_stats():
     Returns things like total number of trips, date ranges, etc.
     """
     try:
-        # Get statistics from our database helper function
         stats = get_trip_stats()
-        return jsonify(stats)  # Send the stats as JSON to the web page
+        return jsonify(stats)
     except Exception as e:
         # If something goes wrong, send an error message
         print(f"Error getting stats: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-# This is the main part that starts our web server
-# Only runs if we execute this file directly (not if it's imported by another file)
 if __name__ == '__main__':
     print("\n=== NYC Taxi Dashboard Server ===")
     print("Starting server... Visit http://localhost:5000 to view the dashboard")
     print("Press Ctrl+C to stop the server")
     print("=====================================\n")
-    # Start the Flask web server in debug mode (shows detailed error messages)
+    # Start the Flask web server in debug mode
     app.run(debug=True)

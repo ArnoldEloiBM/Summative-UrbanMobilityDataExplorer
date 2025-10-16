@@ -1,14 +1,8 @@
-# NYC Taxi Database Manager
-# This file handles all database operations for our taxi dashboard
-# Written by: Gedeon Ntigibesh (Original Implementation)
-# Purpose: Create, manage, and query our SQLite database with taxi trip data
-
-# Import libraries for database operations
-import sqlite3  # SQLite database library (built into Python)
-import os      # Operating system functions (check if files exist)
+import sqlite3
+import os
 
 # Define the name of our database file
-DB_NAME = 'taxi_data.db'  # This file will store all our processed taxi data
+DB_NAME = 'taxi_data.db'
 
 def init_db():
     """
@@ -17,17 +11,10 @@ def init_db():
     If tables already exist, it deletes them first (fresh start).
     """
     try:
-        # Connect to our SQLite database (creates file if it doesn't exist)
         conn = sqlite3.connect(DB_NAME)
-        c = conn.cursor()  # Cursor lets us run SQL commands
-        
-        # Delete any existing tables to start fresh
-        # This prevents errors if we run the setup multiple times
-        c.execute('DROP TABLE IF EXISTS transactions')  # Old table (if exists)
-        c.execute('DROP TABLE IF EXISTS taxi_trips')    # Main table (if exists)
-        
-        # Create our main table to store all taxi trip information
-        # Each row will represent one taxi trip with all its details
+        c = conn.cursor()
+        c.execute('DROP TABLE IF EXISTS transactions')
+        c.execute('DROP TABLE IF EXISTS taxi_trips')
         c.execute('''
             CREATE TABLE taxi_trips (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,    -- Unique ID for each record (auto-generated)
@@ -52,20 +39,17 @@ def init_db():
             )
         ''')
         
-        # Create indexes to make our queries run faster
-        # Think of indexes like a phone book - they help find data quickly
-        # Without indexes, the database has to look through every single row
         print("Creating database indexes for fast queries...")
-        c.execute('CREATE INDEX idx_pickup_datetime ON taxi_trips(pickup_datetime)')      # For date filtering
-        c.execute('CREATE INDEX idx_vendor_id ON taxi_trips(vendor_id)')                 # For vendor filtering
-        c.execute('CREATE INDEX idx_time_of_day ON taxi_trips(time_of_day)')             # For time period charts
-        c.execute('CREATE INDEX idx_distance_category ON taxi_trips(trip_distance_category)')  # For distance charts
-        c.execute('CREATE INDEX idx_hour ON taxi_trips(hour)')                           # For hourly analysis
-        c.execute('CREATE INDEX idx_day_of_week ON taxi_trips(day_of_week)')             # For weekly patterns
-        c.execute('CREATE INDEX idx_month ON taxi_trips(month)')                         # For monthly trends
-        c.execute('CREATE INDEX idx_duration ON taxi_trips(trip_duration)')             # For duration analysis
-        c.execute('CREATE INDEX idx_distance ON taxi_trips(distance_km)')               # For distance analysis
-        c.execute('CREATE INDEX idx_speed ON taxi_trips(speed_kmh)')                     # For speed analysis
+        c.execute('CREATE INDEX idx_pickup_datetime ON taxi_trips(pickup_datetime)')
+        c.execute('CREATE INDEX idx_vendor_id ON taxi_trips(vendor_id)')
+        c.execute('CREATE INDEX idx_time_of_day ON taxi_trips(time_of_day)')
+        c.execute('CREATE INDEX idx_distance_category ON taxi_trips(trip_distance_category)')
+        c.execute('CREATE INDEX idx_hour ON taxi_trips(hour)')
+        c.execute('CREATE INDEX idx_day_of_week ON taxi_trips(day_of_week)')
+        c.execute('CREATE INDEX idx_month ON taxi_trips(month)')
+        c.execute('CREATE INDEX idx_duration ON taxi_trips(trip_duration)')
+        c.execute('CREATE INDEX idx_distance ON taxi_trips(distance_km)')
+        c.execute('CREATE INDEX idx_speed ON taxi_trips(speed_kmh)')
         
         conn.commit()
         conn.close()
@@ -83,17 +67,11 @@ def store_taxi_data(data):
         data: List of cleaned trip dictionaries from process.py
     """
     try:
-        # Connect to the database
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
         
         print(f"Saving {len(data):,} trips to database...")
-        
-        # Insert each trip into the database
-        # We use a loop to process each trip one by one
         for item in data:
-            # Use INSERT OR IGNORE to skip duplicates (if we run this twice)
-            # The ? marks are placeholders that prevent SQL injection attacks
             c.execute('''
                 INSERT OR IGNORE INTO taxi_trips (
                     trip_id, vendor_id, pickup_datetime, dropoff_datetime,
@@ -137,22 +115,15 @@ def get_unique_vendors():
         # Connect to the database
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
-        
-        # Get all unique vendor IDs from our trips table
-        # DISTINCT means no duplicates, ORDER BY sorts them
         vendors = c.execute('''
             SELECT DISTINCT vendor_id 
             FROM taxi_trips 
             ORDER BY vendor_id
         ''').fetchall()
-        conn.close()  # Always close the connection when done
-        
-        # Convert the results to a list of strings
-        # vendors comes back as [(1,), (2,), (3,)] so we extract the first item
+        conn.close()
         return [str(v[0]) for v in vendors]
         
     except Exception as e:
-        # If something goes wrong, print error and return empty list
         print(f"Error getting unique vendors: {str(e)}")
         return []
 
@@ -165,15 +136,10 @@ def get_trip_stats():
         Dictionary with statistics like total trips, averages, date range, etc.
     """
     try:
-        # Check if database exists
         if not os.path.exists(DB_NAME):
-            return {}  # Return empty dict if no database
-        
-        # Connect to database
+            return {}
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
-        
-        # Run a query to calculate various statistics about all trips
         stats = c.execute('''
             SELECT 
                 COUNT(*) as total_trips,            -- How many trips total
@@ -183,25 +149,21 @@ def get_trip_stats():
                 MIN(pickup_datetime) as earliest_trip, -- Oldest trip in our data
                 MAX(pickup_datetime) as latest_trip    -- Newest trip in our data
             FROM taxi_trips
-        ''').fetchone()  # fetchone() gets just the first (and only) row
-        
-        conn.close()  # Close database connection
-        
-        # If we got results, format them nicely
+        ''').fetchone() 
+        conn.close()
+
         if stats:
             return {
-                'total_trips': stats[0],  # Keep total as integer
-                'avg_duration': round(stats[1], 2) if stats[1] else 0,  # Round to 2 decimal places
-                'avg_distance': round(stats[2], 2) if stats[2] else 0,  # Round to 2 decimal places
-                'avg_speed': round(stats[3], 2) if stats[3] else 0,     # Round to 2 decimal places
-                'earliest_trip': stats[4],  # Keep as string (datetime)
-                'latest_trip': stats[5]     # Keep as string (datetime)
+                'total_trips': stats[0],
+                'avg_duration': round(stats[1], 2) if stats[1] else 0,
+                'avg_distance': round(stats[2], 2) if stats[2] else 0,
+                'avg_speed': round(stats[3], 2) if stats[3] else 0,
+                'earliest_trip': stats[4],
+                'latest_trip': stats[5]
             }
-        
         # If no results, return empty dictionary
         return {}
         
     except Exception as e:
-        # If anything goes wrong, print error and return empty dict
         print(f"Error getting trip stats: {str(e)}")
         return {}
